@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from .forms import *
+from products.models import Product, ProductPhone, ProductLaptop
+from django.views.generic.base import View
+from django.views.generic import ListView
 
 def register(request):
 	userform = RegistrationForm()
@@ -12,6 +15,20 @@ def login(request):
 def store(request):
 	return render(request, "store.html")
 
+class ProductView(View):
+	"""Список product"""
+	#model = Product
+	#queryset = Product.objects.all()
+	#template_name = "store.html"
+	def get(self, request):
+		product = Product.objects.all()
+		return render(request, "store.html", {"product_list": product})
+
+class ProductDetailView(View):
+	"""Конкретный product"""
+	def get(self, request, slug):
+		product = Product.objects.get(url=slug)
+		return render(request, "product.html", {"product": product})
 
 def index(request):
 	name = "Coding"
