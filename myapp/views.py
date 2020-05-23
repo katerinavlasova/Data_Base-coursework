@@ -9,7 +9,7 @@ def register(request):
 		return redirect("register.html")
 	else:
 		form = RegisterForm()
-	return render(request, "index.html", {'form': form})
+	return render(request, "register.html", {'form': form})
 
 
 def index(request):
