@@ -1,15 +1,16 @@
 from django.shortcuts import render
-from .forms import CustomerForm
+from .forms import *
 
 def register(request):
-	if request.POST:
-		form = RegisterForm(request.POST)
-	if form.is_valid():
-		form.save(request)
-		return redirect("register.html")
-	else:
-		form = RegisterForm()
-	return render(request, "register.html", {'form': form})
+	userform = RegistrationForm()
+	return render(request, "register.html", {"form": userform})
+
+def login(request):
+	userform = LoginForm()
+	return render(request, "login.html", {"form": userform})
+
+def store(request):
+	return render(request, "store.html")
 
 
 def index(request):
