@@ -23,6 +23,8 @@ class Product(models.Model):
 		return "%s" % (self.name)
 	def get_absolute_url(self):
 		return reverse("product_detail", kwargs={"slug": self.url})
+	#def get_ProductImage(self):
+	#	return self.ProductImage_set.all()
 	class Meta:
 		verbose_name = 'Продукт'
 		verbose_name_plural = 'Продукты'
@@ -47,12 +49,43 @@ class ProductLaptop(Product):
 	RAM = models.CharField(max_length = 20, null = True, default = None)
 	resolution = models.CharField(max_length = 40, null = True, default = None)
 	display_diagonal = models.CharField(max_length = 30, null = True, default = None)
+	class Meta:
+		verbose_name = 'Ноутбук'
+		verbose_name_plural = 'Ноутбуки'
 
 class ProductImage(models.Model):
-	product = models.ForeignKey(Product, on_delete=models.CASCADE, blank = True, null = True, default = None)
+	product = models.ForeignKey(Product, on_delete=models.CASCADE, blank = True, null = True, default = None, related_name = 'productimage')
 	image = models.ImageField(upload_to='products_images/', default=None)
 	is_active = models.BooleanField(default=True)
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
 	updated = models.DateTimeField(auto_now_add = False, auto_now = True)
 	def __str__(self):
 		return "%s" % (self.id)
+	def one_item(self):
+		return ProductImage.objects.get(is_active=True)
+	class Meta:
+		verbose_name = 'Фотография продукта'
+		verbose_name_plural = 'Фотографии продуктов'
+
+
+class Reviews(models.Model):
+	"""Отзывы"""
+	email = models.EmailField()
+	name = models.CharField("Имя", max_length=100)
+	text = models.TextField("Сообщение", max_length=5000)
+	#parent = models.ForeignKey('self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True)
+	product = models.ForeignKey(Product, verbose_name="Продукт", on_delete=models.CASCADE)
+	created = models.DateTimeField(auto_now_add = True, auto_now = False)
+
+	def __str__(self):
+		return f"{self.name} - {self.product}"
+
+	class Meta:
+		verbose_name = "Отзыв"
+		verbose_name_plural = "Отзывы"
+
+
+
+
+
+

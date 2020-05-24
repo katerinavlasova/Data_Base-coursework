@@ -25,6 +25,7 @@ urlpatterns = [
 	#path('store/', views.store, name ="store"),
 	path('store/', views.ProductView.as_view(), name ="store"),
 	path('<slug:slug>', views.ProductDetailView.as_view(), name = "product_detail"),
+	path('review/<int:pk>/', views.AddReview.as_view(), name = "add_review"),
 	path('', views.index, name = "index"),
 	path('admin/', admin.site.urls),
 

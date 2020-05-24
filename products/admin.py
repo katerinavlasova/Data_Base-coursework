@@ -39,3 +39,15 @@ class ProductImageAdmin(admin.ModelAdmin):
 
 #admin.site.register(laptops)
 admin.site.register(ProductImage, ProductImageAdmin)
+
+
+class ReviewsAdmin(admin.ModelAdmin):
+	list_display = [field.name for field in Reviews._meta.fields]
+	class Meta:
+		model = Reviews
+
+admin.site.register(Reviews, ReviewsAdmin)
+
+
+
+

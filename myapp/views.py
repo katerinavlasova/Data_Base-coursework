@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import *
-from products.models import Product, ProductPhone, ProductLaptop
+from products.models import Product, ProductPhone, ProductLaptop, Reviews
 from django.views.generic.base import View
 from django.views.generic import ListView
 
@@ -15,13 +15,23 @@ def login(request):
 def store(request):
 	return render(request, "store.html")
 
+class AddReview(View):
+	def post(self, request, pk):
+		form = ReviewForm(request.POST)
+		product = Product.objects.get(id=pk)
+		if form.is_valid():
+			form = form.save(commit=False)
+			form.product = product
+			form.save() 
+		return redirect(product.get_absolute_url())
+
 class ProductView(View):
 	"""Список product"""
 	#model = Product
 	#queryset = Product.objects.all()
 	#template_name = "store.html"
 	def get(self, request):
-		product = Product.objects.all()
+		product = Product.objects.filter(is_active=True)
 		return render(request, "store.html", {"product_list": product})
 
 class ProductDetailView(View):

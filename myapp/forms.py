@@ -1,5 +1,6 @@
 from django import forms
-from .models import *
+from myapp.models import *
+from products.models import Reviews
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -30,3 +31,24 @@ class RegistrationForm(forms.Form):
 		user.save()
 		profile = Profile.objects.create(user = user, first_name = cdata['first_name'], last_name = cdata['last_name'])
 		profile.save()
+
+
+class ReviewForm(forms.ModelForm):
+	"""Otziv"""
+	class Meta:
+		model = Reviews
+		fields = ("name", "email", "text")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
