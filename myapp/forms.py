@@ -1,6 +1,6 @@
 from django import forms
 from myapp.models import *
-from products.models import Reviews
+from products.models import Reviews, ReviewsStar
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -39,6 +39,11 @@ class ReviewForm(forms.ModelForm):
 		model = Reviews
 		fields = ("name", "email", "text")
 
+class RatingForm(forms.ModelForm):
+	star = forms.ModelChoiceField(queryset = ReviewsStar.objects.all(), widget=forms.RadioSelect(), empty_label=None)
+	class Meta:
+		model = Reviews
+		fields=("star",)
 
 
 

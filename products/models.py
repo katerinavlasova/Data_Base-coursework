@@ -67,13 +67,23 @@ class ProductImage(models.Model):
 		verbose_name = 'Фотография продукта'
 		verbose_name_plural = 'Фотографии продуктов'
 
+class ReviewsStar(models.Model):
+    """Звезда рейтинга"""
+    value = models.SmallIntegerField("Значение", default=0)
+    def __str__(self):
+        return f"{self.value}"
+    class Meta:
+        verbose_name = "Звезда рейтинга"
+        verbose_name_plural = "Звезды рейтинга"
+
+
 
 class Reviews(models.Model):
 	"""Отзывы"""
 	email = models.EmailField()
 	name = models.CharField("Имя", max_length=100)
 	text = models.TextField("Сообщение", max_length=5000)
-	#parent = models.ForeignKey('self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True)
+	star = models.ForeignKey(ReviewsStar, on_delete=models.CASCADE, verbose_name="звезда", blank = True, null = True, default = None)
 	product = models.ForeignKey(Product, verbose_name="Продукт", on_delete=models.CASCADE)
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
 
@@ -83,6 +93,9 @@ class Reviews(models.Model):
 	class Meta:
 		verbose_name = "Отзыв"
 		verbose_name_plural = "Отзывы"
+
+
+
 
 
 

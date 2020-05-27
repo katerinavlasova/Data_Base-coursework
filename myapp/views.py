@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from .forms import *
 from products.models import Product, ProductPhone, ProductLaptop, Reviews
 from django.views.generic.base import View
+from django.http import JsonResponse, HttpResponse
 from django.views.generic import ListView
+from django.db.models import Q
 
 def register(request):
 	userform = RegistrationForm()
@@ -30,6 +32,7 @@ class ProductView(View):
 	#model = Product
 	#queryset = Product.objects.all()
 	#template_name = "store.html"
+	paginate_by = 2
 	def get(self, request):
 		product = Product.objects.filter(is_active=True)
 		return render(request, "store.html", {"product_list": product})
@@ -39,6 +42,19 @@ class ProductDetailView(View):
 	def get(self, request, slug):
 		product = Product.objects.get(url=slug)
 		return render(request, "product.html", {"product": product})
+
+class Search(ListView):
+	model = Product
+	template_name="search.html"
+	def get_queryset(self):
+		# Получаем не отфильтрованный кверисет всех моделей
+		queryset = Product.objects.all()
+		q = self.request.GET.get("q")
+		if q:
+			# Если 'q' в GET запросе, фильтруем кверисет по данным из 'q'
+			    return queryset.filter(Q(name__icontains=q))# | Q(post__icontains=q))
+		return queryset
+
 
 def index(request):
 	name = "Coding"

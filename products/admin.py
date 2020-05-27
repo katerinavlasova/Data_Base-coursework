@@ -49,5 +49,19 @@ class ReviewsAdmin(admin.ModelAdmin):
 admin.site.register(Reviews, ReviewsAdmin)
 
 
+class ReviewsStarAdmin(admin.ModelAdmin):
+	list_display = [field.name for field in ReviewsStar._meta.fields]
+	class Meta:
+		model = ReviewsStar
+
+admin.site.register(ReviewsStar, ReviewsStarAdmin)
+
+
+
+
+
+
+
+
 
 

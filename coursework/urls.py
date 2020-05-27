@@ -20,14 +20,16 @@ from myapp import views
 from django.conf.urls.static import static
 from django.conf import settings
 urlpatterns = [
+	path('admin/', admin.site.urls),
 	path('register/', views.register, name ="register"),
 	path('login/', views.login, name ="login"),
+	path('search/', views.Search.as_view(), name ="search"),
 	#path('store/', views.store, name ="store"),
 	path('store/', views.ProductView.as_view(), name ="store"),
-	path('<slug:slug>', views.ProductDetailView.as_view(), name = "product_detail"),
+	path('<slug:slug>/', views.ProductDetailView.as_view(), name = "product_detail"),
 	path('review/<int:pk>/', views.AddReview.as_view(), name = "add_review"),
 	path('', views.index, name = "index"),
-	path('admin/', admin.site.urls),
+	#path('admin/', admin.site.urls),
 
 #
 
