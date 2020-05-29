@@ -23,8 +23,8 @@ urlpatterns = [
 	path('admin/', admin.site.urls),
 	path('register/', views.register, name ="register"),
 	path('login/', views.login, name ="login"),
+
 	path('search/', views.Search.as_view(), name ="search"),
-	#path('store/', views.store, name ="store"),
 	path('store/', views.ProductView.as_view(), name ="store"),
 	path('<slug:slug>/', views.ProductDetailView.as_view(), name = "product_detail"),
 	path('review/<int:pk>/', views.AddReview.as_view(), name = "add_review"),

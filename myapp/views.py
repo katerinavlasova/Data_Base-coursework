@@ -3,7 +3,7 @@ from .forms import *
 from products.models import Product, ProductPhone, ProductLaptop, Reviews
 from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponse
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.db.models import Q
 
 def register(request):
@@ -17,6 +17,9 @@ def login(request):
 def store(request):
 	return render(request, "store.html")
 
+
+
+
 class AddReview(View):
 	def post(self, request, pk):
 		form = ReviewForm(request.POST)
@@ -27,21 +30,33 @@ class AddReview(View):
 			form.save() 
 		return redirect(product.get_absolute_url())
 
-class ProductView(View):
+class ShowFilters:
+	def filter_brand(self):
+		return Product.objects.filter(is_active=True).distinct("brand")
+	def filter_category(self):
+		return Product.objects.filter(is_active=True).distinct("category")
+
+class ProductView(ShowFilters, ListView):
 	"""Список product"""
-	#model = Product
+	model = Product
 	#queryset = Product.objects.all()
 	#template_name = "store.html"
-	paginate_by = 2
-	def get(self, request):
-		product = Product.objects.filter(is_active=True)
-		return render(request, "store.html", {"product_list": product})
+	queryset = Product.objects.filter(is_active=True)
+	context_object_name='product_list'
+	template_name = 'store.html'
+	#def get(self, request):
+	#	product = Product.objects.filter(is_active=True)
+	#	return render(request, "store.html", {"product_list": product})
 
-class ProductDetailView(View):
+class ProductDetailView(ShowFilters, DetailView):
 	"""Конкретный product"""
-	def get(self, request, slug):
-		product = Product.objects.get(url=slug)
-		return render(request, "product.html", {"product": product})
+	model = Product
+	slug_field ="url"
+	context_object_name = 'product'
+	template_name = 'product.html'
+	#def get(self, request, slug):
+	#	product = Product.objects.get(url=slug)
+	#	return render(request, "product.html", {"product": product})
 
 class Search(ListView):
 	model = Product

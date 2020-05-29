@@ -8,6 +8,8 @@ class Product(models.Model):
 	name = models.CharField(max_length = 30, null = True, default = None)
 	brand = models.CharField(max_length=40, null = True, default = None)
 	series = models.CharField(max_length=30, null = True, default = None)
+	category_choices = [('Laptops', 'Laptop'), ('Phones', 'Phone')]
+	category = models.CharField(max_length =10, choices = category_choices, blank = True, null = True, default = None)
 	price = models.IntegerField(default = 0)
 	discount = models.IntegerField(default = 0)
 	is_active = models.BooleanField(default=True)
@@ -23,8 +25,8 @@ class Product(models.Model):
 		return "%s" % (self.name)
 	def get_absolute_url(self):
 		return reverse("product_detail", kwargs={"slug": self.url})
-	#def get_ProductImage(self):
-	#	return self.ProductImage_set.all()
+	def get_products(self):
+		Product.objects.filter(is_active=True).values("brand")
 	class Meta:
 		verbose_name = 'Продукт'
 		verbose_name_plural = 'Продукты'
