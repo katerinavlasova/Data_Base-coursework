@@ -58,6 +58,15 @@ class ProductDetailView(ShowFilters, DetailView):
 	#	product = Product.objects.get(url=slug)
 	#	return render(request, "product.html", {"product": product})
 
+class FilterProductsView(ShowFilters, ListView):
+	template_name='store.html'
+	def get_queryset(self):
+		queryset = Product.objects.filter(
+            Q(category__in=self.request.GET.getlist("category")) |
+            Q(brand__in=self.request.GET.getlist("brand"))
+        )
+		return queryset
+
 class Search(ListView):
 	model = Product
 	template_name="search.html"
