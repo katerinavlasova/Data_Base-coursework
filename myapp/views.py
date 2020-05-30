@@ -39,6 +39,7 @@ class ShowFilters:
 class ProductView(ShowFilters, ListView):
 	"""Список product"""
 	model = Product
+	paginate_by = 1
 	#queryset = Product.objects.all()
 	#template_name = "store.html"
 	queryset = Product.objects.filter(is_active=True)
@@ -54,6 +55,10 @@ class ProductDetailView(ShowFilters, DetailView):
 	slug_field ="url"
 	context_object_name = 'product'
 	template_name = 'product.html'
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["star_form"] = ReviewForm()
+		return context
 	#def get(self, request, slug):
 	#	product = Product.objects.get(url=slug)
 	#	return render(request, "product.html", {"product": product})

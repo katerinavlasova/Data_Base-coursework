@@ -6,6 +6,7 @@ from django.urls import reverse
 
 class Product(models.Model):
 	name = models.CharField(max_length = 30, null = True, default = None)
+	copies = models.IntegerField(default = 0)
 	brand = models.CharField(max_length=40, null = True, default = None)
 	series = models.CharField(max_length=30, null = True, default = None)
 	category_choices = [('Laptops', 'Laptop'), ('Phones', 'Phone')]

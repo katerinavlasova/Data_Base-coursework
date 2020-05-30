@@ -37,7 +37,7 @@ class ReviewForm(forms.ModelForm):
 	"""Otziv"""
 	class Meta:
 		model = Reviews
-		fields = ("name", "email", "text")
+		fields = ("name", "email", "text", "star",)
 
 class RatingForm(forms.ModelForm):
 	star = forms.ModelChoiceField(queryset = ReviewsStar.objects.all(), widget=forms.RadioSelect(), empty_label=None)
