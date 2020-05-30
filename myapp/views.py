@@ -61,11 +61,12 @@ class ProductDetailView(ShowFilters, DetailView):
 class FilterProductsView(ShowFilters, ListView):
 	template_name='store.html'
 	def get_queryset(self):
-		queryset = Product.objects.filter(
-            Q(category__in=self.request.GET.getlist("category")) |
-            Q(brand__in=self.request.GET.getlist("brand"))
-        )
-		return queryset
+		kwargs = {}
+		if self.request.GET.getlist("category"):
+			kwargs["category__in"] = self.request.GET.getlist("category")
+		if self.request.GET.getlist("brand"):
+			kwargs["brand__in"] = self.request.GET.getlist("brand")
+		return Product.objects.filter(**kwargs)
 
 class Search(ListView):
 	model = Product

@@ -328,7 +328,7 @@
 								<div id="tab1" class="tab-pane fade in active">
 									<div class="row">
 										<div class="col-md-12">
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+											<p>{{ product.description }}</p>
 										</div>
 									</div>
 								</div>
@@ -338,7 +338,33 @@
 								<div id="tab2" class="tab-pane fade in">
 									<div class="row">
 										<div class="col-md-12">
-											<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+											<center><table>
+												<tr><th> Характеристика </th><th> Значение </th></tr> <!--ряд с ячейками заголовков-->
+												<tr><td width="250" height="50">Название</td><td width="250">{{ product.name }}</td></tr>
+												<tr><td height="50">Бренд</td><td>{{ product.brand}}</td></tr>
+												<tr><td height="50">Серия</td><td>{{ product.series }}</td></tr>
+												<tr><td height="50">Цена</td><td>{{ product.price }}</td></tr>
+												<tr><td height="50">Цвет</td><td>{{ product.color }}</td></tr>
+												<tr><td height="50">Вес</td><td>{{ product.weight }}</td></tr>
+												<tr><td height="50">Страна</td><td>{{ product.country }}</td></tr>
+												<tr><td height="50">Гарантия</td><td>{{ product.guarantee }}</td></tr>
+												{% for pr in product.product_phone.all %}
+												<tr><td height="50">Экран</td><td>{{ pr.screen }}</td></tr> <!--ряд с ячейками тела таблицы-->
+												<tr><td height="50">Дисплей</td><td>{{ pr.dimensions }}</td></tr>
+												<tr><td height="50">Операционная система</td><td>{{ pr.os }}</td></tr>
+												<tr><td height="50">ROM</td><td>{{ pr.ROM }}</td></tr>
+												<tr><td height="50">Блютуз</td><td>{{ pr.bluetooth }}</td></tr>
+											  {% endfor %}
+												{% for pr in product.product_laptop.all %}
+												<tr><td height="50">Операционная система</td><td>{{ pr.os }}</td></tr> <!--ряд с ячейками тела таблицы-->
+												<tr><td height="50">CPU</td><td>{{ pr.cpu }}</td></tr>
+												<tr><td height="50">Ядра</td><td>{{ pr.cores }}</td></tr>
+												<tr><td height="50">Частота памяти</td><td>{{ pr.memory_freq }}</td></tr>
+												<tr><td height="50">RAM</td><td>{{ pr.RAM }}</td></tr>
+												<tr><td height="50">Разрешение</td><td>{{ pr.resolution }}</td></tr>
+												<tr><td height="50">Диагональ дисплея</td><td>{{ pr.display_diagonal }}</td></tr>
+												{% endfor %}
+											</table></center>
 										</div>
 									</div>
 								</div>
@@ -512,7 +538,7 @@
 
 					<div class="col-md-12">
 						<div class="section-title text-center">
-							<h3 class="title">Related Products</h3>
+							<h3 class="title">Вам может понравится...</h3>
 						</div>
 					</div>
 

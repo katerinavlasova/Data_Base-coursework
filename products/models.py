@@ -32,7 +32,7 @@ class Product(models.Model):
 		verbose_name_plural = 'Продукты'
 	
 class ProductPhone(Product):
-	#is_active = models.BooleanField(default=True)
+	product = models.ForeignKey(Product, on_delete=models.CASCADE, blank = True, null = True, default = None, related_name = 'product_phone')
 	screen = models.CharField(max_length = 25, null = True, default = None)
 	dimensions = models.CharField(max_length = 25, null = True, default = None)
 	os = models.CharField(max_length = 15, null = True, default = None)
@@ -43,8 +43,8 @@ class ProductPhone(Product):
 		verbose_name_plural = 'Телефоны'
 
 class ProductLaptop(Product):
+	product = models.ForeignKey(Product, on_delete=models.CASCADE, blank = True, null = True, default = None, related_name = 'product_laptop')
 	os = models.CharField(max_length = 15, null = True, default = None)
-	#is_active = models.BooleanField(default=True)
 	cpu = models.CharField(max_length = 15, null = True, default = None)
 	cores = models.IntegerField(default = 0)
 	memory_freq = models.CharField(max_length = 20, null = True, default = None)
