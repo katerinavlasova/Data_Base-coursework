@@ -214,12 +214,15 @@
             <div class="row">
                 <div class="col-lg-offset-4">
                     <h1 class="title">Войти в акканут</h1>
-			<table>
-				<tr><th width="200">Имя:</th><th>{{ form.first_name }}</th></tr>
-				<tr><th>Фамилия:</th><th>{{ form.last_name }}</th></tr>
-				<tr><th>Пароль:</th><th>{{ form.password }}</th></tr>
-			</table>
-<div><button type="submit" color="red">Войти</button></div> <!--class="btn btn-success"-->
+										<form method="POST" novalidate>
+											{% csrf_token %}
+													<table>
+														<tr><th width="200">Имя:</th><th>{{ form.first_name }}</th></tr>
+														<tr><th>Фамилия:</th><th>{{ form.last_name }}</th></tr>
+														<tr><th>Пароль:</th><th>{{ form.password }}</th></tr>
+													</table>
+										<div><button type="submit" color="red">Войти</button></div> <!--class="btn btn-success"-->
+									</form>
 		</div>
 	     </div>
           </div>

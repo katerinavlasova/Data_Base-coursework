@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import *
+from django.contrib.auth.decorators import login_required
+import json
 from products.models import Product, ProductPhone, ProductLaptop, Reviews
 from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponse
@@ -20,8 +22,26 @@ def register(request):
 	return render(request, 'register.html', {'form': form})
 
 def login(request):
-	userform = LoginForm()
+	if request.POST:
+		form = LoginForm(request.POST)
+		if form.is_valid():
+			cdata = form.cleaned_data
+			user = auth.authenticate(
+				username=cdata['last_name'],
+				first_name=cdata['first_name'],
+				password=cdata['password'])
+		if user is not None:
+			auth.login(request, user)
+			return redirect('index')
+		form.add_error('username', "Wrong username or password")
+	else:
+		userform = LoginForm()
 	return render(request, "login.html", {"form": userform})
+
+def logout(request):
+	auth.logout(request)
+	return redirect('index')
+
 
 def store(request):
 	return render(request, "store.html")

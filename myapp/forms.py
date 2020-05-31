@@ -3,6 +3,7 @@ from myapp.models import *
 from products.models import Reviews, ReviewsStar
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib import auth
 
 class CustomerForm(forms.ModelForm):
 	class Meta:
@@ -13,7 +14,6 @@ class LoginForm(forms.Form):
 	first_name = forms.CharField(required=True, label='Имя')
 	last_name = forms.CharField(required=True, label = 'Фамииля')
 	password = forms.CharField(required=True, label ='Пароль', widget=forms.PasswordInput())
-
 
 
 class RegisterForm(forms.Form):

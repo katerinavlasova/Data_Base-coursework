@@ -36,7 +36,7 @@
 		<![endif]-->
 
     </head>
-	<body>
+<body>
 		<!-- HEADER -->
 		<header>
 			<!-- TOP HEADER -->
@@ -48,8 +48,12 @@
 						<li><a href="#"><i class="fa fa-map-marker"></i>Москва, Красная площадь</a></li>
 					</ul>
 					<ul class="header-links pull-right">
+						{% if user.is_authenticated %}
+						<li><a href="{% url "store" %}"><i class="fa fa-user-o"></i> Выйти</a></li>
+						{% else %}
 						<li><a href="{% url "login" %}"><i class="fa fa-user-o"></i> Войти</a></li>
 						<li><a href="{% url "register" %}"><i class="fa fa-user-o"></i> Зарегистрироваться</a></li>
+						{% endif %}
 					</ul>
 				</div>
 			</div>
@@ -163,6 +167,8 @@
 			<!-- /MAIN HEADER -->
 		</header>
 		<!-- /HEADER -->
+
+
 
 		<!-- NAVIGATION -->
 		<nav id="navigation">
@@ -616,6 +622,5 @@
 		<script src="{% static 'js/nouislider.min.js' %}"></script>
 		<script src="{% static 'js/jquery.zoom.min.js' %}"></script>
 		<script src="{% static 'js/main.js' %}"></script>
-
 	</body>
-</html>
+	</html>
