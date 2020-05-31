@@ -5,10 +5,19 @@ from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import ListView, DetailView
 from django.db.models import Q
+#def register(request):
+#	userform = RegistrationForm(request.POST)
+#	return render(request, "register.html", {"form": userform})
 
 def register(request):
-	userform = RegistrationForm()
-	return render(request, "register.html", {"form": userform})
+	if request.POST:
+		form = RegisterForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save(request)
+			return redirect('index')
+	else:
+		form = RegisterForm()
+	return render(request, 'register.html', {'form': form})
 
 def login(request):
 	userform = LoginForm()
@@ -39,7 +48,7 @@ class ShowFilters:
 class ProductView(ShowFilters, ListView):
 	"""Список product"""
 	model = Product
-	paginate_by = 1
+	paginate_by = 4
 	#queryset = Product.objects.all()
 	#template_name = "store.html"
 	queryset = Product.objects.filter(is_active=True)
@@ -65,6 +74,7 @@ class ProductDetailView(ShowFilters, DetailView):
 
 class FilterProductsView(ShowFilters, ListView):
 	template_name='store.html'
+	#paginate_by = 1
 	def get_queryset(self):
 		kwargs = {}
 		if self.request.GET.getlist("category"):

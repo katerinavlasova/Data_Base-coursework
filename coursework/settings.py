@@ -57,7 +57,7 @@ ROOT_URLCONF = 'coursework.urls'
 
 #MEDIA_URL = '/media/'
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
+AUTH_PROFILE_MODULE = 'list.Customer'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static", "static_prod")
 STATIC_URL = '/static/'
