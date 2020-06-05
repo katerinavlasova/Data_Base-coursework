@@ -6,6 +6,10 @@ class ProductInOrderInline(admin.TabularInline):
 	model = ProductInOrder
 	extra = 0
 
+class ProductInBasketInline(admin.TabularInline):
+	model = ProductInBasket
+	extra = 0
+
 
 class StatusAdmin(admin.ModelAdmin):
 	list_display = [field.name for field in Status._meta.fields]
@@ -36,6 +40,17 @@ class ProductInOrderAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ProductInOrder, ProductInOrderAdmin)
+
+
+class BasketAdmin(admin.ModelAdmin):
+	list_display = [field.name for field in Basket._meta.fields]
+	inlines = [ProductInBasketInline]
+	class Meta:
+		model = Basket
+
+
+#admin.site.register(laptops)
+admin.site.register(Basket, BasketAdmin)
 
 
 class ProductInBasketAdmin(admin.ModelAdmin):

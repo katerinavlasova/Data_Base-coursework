@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 import json
+from django.contrib import messages
 from products.models import Product, ProductPhone, ProductLaptop, Reviews
-from orders.models import Order, ProductInOrder
+from orders.models import Order, ProductInOrder, Basket, ProductInBasket, Status
 from myapp.models import Customer
 from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponse
@@ -89,6 +91,86 @@ class OrderListView(View):
 	#	print(User.id)
 		return render(request, "order.html", data)#{"order_list": order})
 
+class WishListView(View):
+	"""Список product in wishlist"""
+	#model = Order
+	#queryset = Order.objects.all()
+	#iid = User.id
+	#queryset = Order.objects.filter(Order.customer_id = User.get_id())
+	#template_name = "store.html"
+	#queryset = Order.objects.filter(customer = )
+	#context_object_name='order_list'
+	#template_name = 'wishlist.html'
+
+	def get(self, request):
+		#User.objects.filter(username = Order.customer)#Order.objects.filter(customer=User.get_username(self, request))
+		print("HELLLOO")
+		current_user = request.user.id
+		print(current_user)
+		print(Basket.customer_id)
+		basket = Basket.objects.filter(customer_id = request.user.id)
+		#product_in = ProductInOrder.objects.all()#filter(order_id = orders_id)
+		#product = Product.objects.filter(id = product_in_id)
+		product= Product.objects.all()
+	#	print(User.id)
+		return render(request, "wishlist.html", {"basket_list": basket})#{"order_list": order})
+
+def add_to_basket(request, slug):
+	item = get_object_or_404(Product, slug = slug)
+	basket_item, created = ProductInBasket.objects.get_or_create(product=item, customer_id=request.user.id)
+	basket_qs = Basket.objects.filter(customer_id=request.user.id)
+	if basket_qs.exists():
+		basket = basket_qs[0]
+		#check if the item is in order
+		if ProductInBasket.objects.filter(product__slug=item.slug).exists():
+			messages.info(request, "Вы добавили этот товар:)")
+			basket_item.number += 1
+			basket_item.price_per_item = Product.objects.get(slug=slug).price
+			basket_item.basket = basket_qs[0]
+			basket_item.save()
+			print("11 basket")
+			return redirect("product_detail", slug=slug)
+		else:
+			messages.info(request, "Вы добавили этот товар:)")
+			basket_item.basket = basket_qs[0]
+			basket_item.price_per_item = Product.objects.get(slug=slug).price
+			basket_item.number = 1
+			print("222")
+			basket_item.price_per_item = Product.objects.get(slug=slug).price
+			basket_item.save()
+			return redirect("product_detail", slug=slug)
+	else:
+		print("333")
+		ordered_date = timezone.now()
+		messages.info(request, "Вы добавили этот товар:)")
+		newbasket = Basket.objects.create(customer_id=request.user.id, created = ordered_date)
+		basket_item.basket = newbasket
+		basket_item.price_per_item = Product.objects.get(slug=slug).price
+		basket_item.save()
+		return redirect("product_detail", slug=slug)
+
+def remove_from_basket(request, slug):
+	item = get_object_or_404(Product, slug = slug)
+	basket_item = ProductInBasket.objects.get(product=item, customer_id=request.user.id)
+	basket_qs = Basket.objects.filter(customer_id=request.user.id)
+	print("removeee")
+	if basket_qs.exists():
+		basket = basket_qs[0]
+		#check if the item is in order
+		if ProductInOrder.objects.filter(product__slug=item.slug).exists():
+			messages.info(request, "Вы удалили этот товар из заказа:(")
+			basket_item.delete()
+			return redirect("product_detail", slug=slug)
+	else:
+		print("333")
+		return redirect("product_detail", slug=slug)
+def ordered(request, pk):
+	order = Order.objects.get(id=pk)
+	order.status_id=4
+	if "comment" in self.request.GET:
+		order.commets = comment
+	order.save()
+
 def add_to_order(request, slug):
 	item = get_object_or_404(Product, slug = slug)
 	order_item, created = ProductInOrder.objects.get_or_create(product=item, customer_id=request.user.id)
@@ -97,21 +179,27 @@ def add_to_order(request, slug):
 		order = order_qs[0]
 		#check if the item is in order
 		if ProductInOrder.objects.filter(product__slug=item.slug).exists():
+			messages.info(request, "Вы добавили этот товар:)")
 			order_item.number += 1
-			order_item.order = order_qs[0]
+			if order_item.order != order_qs[0]:
+				order_item.order = order_qs[0]
 			order_item.save()
-			print("11")
+			print("11!!!!!")
 			return redirect("product_detail", slug=slug)
 		else:
+			messages.info(request, "Вы добавили этот товар:)")
 			order_item.order = order_qs[0]
 			order_item.number = 1
-			print("222")
-			order_item.price_per_item = Product.objects.get(slug=slug).price
 			order_item.save()
+			print("222")
+			#order_item.price_per_item = Product.objects.get(slug=slug).price
 			return redirect("product_detail", slug=slug)
 	else:
 		print("333")
-		neworder = Order.objects.create(customer=request.user)
+		status = Status.objects.all()
+		ordered_date = timezone.now()
+		messages.info(request, "Вы добавили этот товар:)")
+		neworder = Order.objects.create(customer_id=request.user.id, created = ordered_date, status_id=3)
 		order_item.order = neworder
 		order_item.save()
 		return redirect("product_detail", slug=slug)
@@ -127,16 +215,21 @@ def remove_from_order(request, slug):
 		if ProductInOrder.objects.filter(product__slug=item.slug).exists():
 			if order_item.number > 1:
 				order_item.number -= 1
-				#order_item.order = order_qs[0]
+				order_item.order = order_qs[0]
 				order_item.save()
+				messages.info(request, "Вы удалили этот товар из заказа:(")
 				print("11")
 				return redirect("product_detail", slug=slug)
 			else:
+				messages.info(request, "Вы удалили этот товар из заказа:(")
+				order_item.order = None
+				order_item.number = 0
 				order_item.delete()
 				return redirect("product_detail", slug=slug)
 	else:
 		print("333")
 		return redirect("product_detail", slug=slug)
+
 
 class ShowFilters:
 	def filter_brand(self):

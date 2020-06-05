@@ -31,8 +31,12 @@ class Product(models.Model):
 		Product.objects.filter(is_active=True).values("brand")
 	def get_add_to_order_url(self):
 		return reverse("add_to_order", kwargs={"slug": self.slug})
+	def get_add_to_basket_url(self):
+		return reverse("add_to_basket", kwargs={"slug": self.slug})
 	def get_remove_from_order_url(self):
 		return reverse("remove_from_order", kwargs={"slug": self.slug})
+	def get_remove_from_basket_url(self):
+		return reverse("remove_from_basket", kwargs={"slug": self.slug})
 	class Meta:
 		verbose_name = 'Продукт'
 		verbose_name_plural = 'Продукты'
