@@ -19,16 +19,20 @@ class Product(models.Model):
 	country = models.CharField(max_length=15, null = True, default = None)
 	guarantee = models.CharField(max_length=10, null = True, default = None)
 	description = models.TextField(blank = True, null = True, default = None)
-	url = models.SlugField(max_length=130, unique=True, blank = True, null = True, default = None)
+	slug = models.SlugField(max_length=130, unique=True, blank = True, null = True, default = None)
 	created = models.DateTimeField(auto_now_add = True, auto_now = False)
 	updated = models.DateTimeField(auto_now_add = False, auto_now = True)
 	def __str__(self):
 		return "%s" % (self.name)
 	def get_absolute_url(self):
-		return reverse("product_detail", kwargs={"slug": self.url})
+		return reverse("product_detail", kwargs={"slug": self.slug})
 	
 	def get_products(self):
 		Product.objects.filter(is_active=True).values("brand")
+	def get_add_to_order_url(self):
+		return reverse("add_to_order", kwargs={"slug": self.slug})
+	def get_remove_from_order_url(self):
+		return reverse("remove_from_order", kwargs={"slug": self.slug})
 	class Meta:
 		verbose_name = 'Продукт'
 		verbose_name_plural = 'Продукты'

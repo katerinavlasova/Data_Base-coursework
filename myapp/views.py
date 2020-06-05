@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 from django.contrib.auth.models import User
 from django.contrib import auth
@@ -63,7 +63,7 @@ class AddReview(View):
 			form.save() 
 		return redirect(product.get_absolute_url())
 
-class WishListView(View):
+class OrderListView(View):
 	"""Список product in wishlist"""
 	#model = Order
 	#queryset = Order.objects.all()
@@ -80,12 +80,63 @@ class WishListView(View):
 		current_user = request.user.id
 		print(current_user)
 		print(Order.customer_id)
-		order = Order.objects.filter(customer_id = request.user.id)
-		#product_in = ProductInOrder.objects.filter(order_id = order.id)
-		product = Product.objects.all()
-		data = {"order_list": order, "products": product}
+		orders = Order.objects.all()
+		orders = orders.filter(customer_id = request.user.id)
+		#product_in = ProductInOrder.objects.all()#filter(order_id = orders_id)
+		#product = Product.objects.filter(id = product_in_id)
+		product= Product.objects.all()
+		data = {"order_list": orders, "products": product}
 	#	print(User.id)
-		return render(request, "wishlist.html", data)#{"order_list": order})
+		return render(request, "order.html", data)#{"order_list": order})
+
+def add_to_order(request, slug):
+	item = get_object_or_404(Product, slug = slug)
+	order_item, created = ProductInOrder.objects.get_or_create(product=item, customer_id=request.user.id)
+	order_qs = Order.objects.filter(customer_id=request.user.id)
+	if order_qs.exists():
+		order = order_qs[0]
+		#check if the item is in order
+		if ProductInOrder.objects.filter(product__slug=item.slug).exists():
+			order_item.number += 1
+			order_item.order = order_qs[0]
+			order_item.save()
+			print("11")
+			return redirect("product_detail", slug=slug)
+		else:
+			order_item.order = order_qs[0]
+			order_item.number = 1
+			print("222")
+			order_item.price_per_item = Product.objects.get(slug=slug).price
+			order_item.save()
+			return redirect("product_detail", slug=slug)
+	else:
+		print("333")
+		neworder = Order.objects.create(customer=request.user)
+		order_item.order = neworder
+		order_item.save()
+		return redirect("product_detail", slug=slug)
+
+def remove_from_order(request, slug):
+	item = get_object_or_404(Product, slug = slug)
+	order_item = ProductInOrder.objects.get(product=item, customer_id=request.user.id)
+	order_qs = Order.objects.filter(customer_id=request.user.id)
+	print("removeee")
+	if order_qs.exists():
+		order = order_qs[0]
+		#check if the item is in order
+		if ProductInOrder.objects.filter(product__slug=item.slug).exists():
+			if order_item.number > 1:
+				order_item.number -= 1
+				#order_item.order = order_qs[0]
+				order_item.save()
+				print("11")
+				return redirect("product_detail", slug=slug)
+			else:
+				order_item.delete()
+				return redirect("product_detail", slug=slug)
+	else:
+		print("333")
+		return redirect("product_detail", slug=slug)
 
 class ShowFilters:
 	def filter_brand(self):
@@ -112,7 +163,7 @@ class ProductView(ShowFilters, ListView):
 class ProductDetailView(ShowFilters, DetailView):
 	"""Конкретный product"""
 	model = Product
-	slug_field ="url"
+	slug_field ="slug"
 	context_object_name = 'product'
 	template_name = 'product.html'
 	def get_context_data(self, **kwargs):

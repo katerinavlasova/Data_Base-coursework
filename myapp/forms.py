@@ -4,11 +4,14 @@ from products.models import Reviews, ReviewsStar
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import auth
+from orders.models import Order
 
 class CustomerForm(forms.ModelForm):
 	class Meta:
 		model = Customer
 		exclude = [""]
+
+
 
 class LoginForm(forms.Form):
 	first_name = forms.CharField(required=True, label='Имя')

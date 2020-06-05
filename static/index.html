@@ -98,7 +98,7 @@
 								<!-- Wishlist -->
 								{% if user.is_authenticated %}
 								<div>
-									<a href="{% url "wishlist" %}">
+									<a href="#">
 										<i class="fa fa-heart-o"></i>
 										<span>Желаемое</span>
 									<!--	<div class="qty">2</div>-->
@@ -110,7 +110,7 @@
 								<!-- Cart -->
 								<div class="dropdown">
 									{% if user.is_authenticated %}
-									<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+									<a href="{% url "orderlist" %}" >
 										<i class="fa fa-shopping-cart"></i>
 										<span>Заказ</span>
 									<!-- 	<div class="qty">3</div>-->
