@@ -29,7 +29,7 @@ class Status(models.Model):
         	verbose_name_plural = 'Статусы заказа'
 
 class Order(models.Model):
-	customer = models.ForeignKey(Customer, on_delete=models.CASCADE, default = None)
+	customer = models.ForeignKey(Customer, on_delete=models.CASCADE, default = None,  related_name = 'customer')
 	total_price = models.DecimalField(max_digits = 10, decimal_places = 2, default = 0) #total price for everytinh in order
 	status = models.ForeignKey(Status, on_delete=models.CASCADE)
 	commets = models.TextField(blank = True, null = True, default = None)
@@ -49,8 +49,8 @@ class Order(models.Model):
 
 
 class ProductInOrder(models.Model):
-	order = models.ForeignKey(Order, on_delete=models.CASCADE, blank = False, null = True, default = None)
-	product = models.ForeignKey(Product, on_delete= models.CASCADE, blank = False, null = True, default = None)
+	order = models.ForeignKey(Order, on_delete=models.CASCADE, blank = False, null = True, default = None,  related_name ='in_order')
+	product = models.ForeignKey(Product, on_delete= models.CASCADE, blank = False, null = True, default = None,  related_name ='productinorder')
 	number = models.IntegerField(default = 0)
 	is_active = models.BooleanField(default=True)
 	price_per_item = models.PositiveIntegerField(default = 1)

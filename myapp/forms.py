@@ -17,11 +17,11 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(forms.Form):
-	first_name = forms.CharField(required=True)
-	last_name = forms.CharField(required=True)
-	email = forms.EmailField(required = True, widget = forms.EmailInput)
-	password = forms.CharField(required=True, widget=forms.PasswordInput(),)
-	repeat_password = forms.CharField(required=True, widget=forms.PasswordInput(),)
+	first_name = forms.CharField(required=True, label='Имя')
+	last_name = forms.CharField(required=True, label = 'Фамииля')
+	email = forms.EmailField(required = True, widget = forms.EmailInput, label = 'Почта')
+	password = forms.CharField(required=True, widget=forms.PasswordInput(), label ='Пароль')
+	repeat_password = forms.CharField(required=True, widget=forms.PasswordInput(), label ='Повторите пароль')
 	def clean_email(self):
 		email = self.cleaned_data.get('email', '')
 		if email == "":
@@ -78,7 +78,7 @@ class RegisterForm(forms.Form):
 			#cdata['email'],
 			#cdata['password'])
 		user.save()
-		profile = Customer.objects.create(user = user, first_name = cdata['first_name'], last_name = cdata['last_name'], email = cdata['email'], password = cdata['password'])
+		profile = Customer.objects.create(user = user, first_name = cdata['first_name'], last_name = cdata['last_name'], email = cdata['email'])
 		profile.save()
 
 

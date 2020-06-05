@@ -26,6 +26,7 @@ class Product(models.Model):
 		return "%s" % (self.name)
 	def get_absolute_url(self):
 		return reverse("product_detail", kwargs={"slug": self.url})
+	
 	def get_products(self):
 		Product.objects.filter(is_active=True).values("brand")
 	class Meta:
