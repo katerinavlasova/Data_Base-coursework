@@ -179,7 +179,7 @@ def ordered(request):
 def add_to_order(request, slug):
 	item = get_object_or_404(Product, slug = slug)
 	order_item, created = ProductInOrder.objects.get_or_create(product=item, customer_id=request.user.id)
-	order_qs = Order.objects.filter(customer_id=request.user.id)
+	order_qs = Order.objects.filter(customer_id=request.user.id, status_id = 3)
 	if order_qs.exists():
 		order = order_qs[0]
 		#check if the item is in order
