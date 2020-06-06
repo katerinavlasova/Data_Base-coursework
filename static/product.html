@@ -194,7 +194,14 @@
 			<!-- /container -->
 		</div>
 		<!-- /BREADCRUMB -->
-
+   <div>{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+			<div align="center" class="nt-5 pt-4"><font size="6" color="#fa8e47">{{ message }}</font></div></li>
+    {% endfor %}
+</ul>
+{% endif %}</div>
 		<!-- SECTION -->
 		<div class="section">
 			<!-- container -->
@@ -247,13 +254,15 @@
 										<span class="qty-down">-</span>
 									</div>
 								</div> -->
+								{% if user.is_authenticated %}
 								<a href="{{ product.get_add_to_order_url }}" product.slug class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> В корзину</a>
+								{% endif %}
 							</div>
-
+{% if user.is_authenticated %}
 							<ul class="product-btns">
 								<li><a href="{{ product.get_add_to_basket_url }}"><i class="fa fa-heart-o"></i> В желаемое</a></li>
 							</ul>
-
+{% endif %}
 							<ul class="product-links">
 								<li>Категория: </li>
 								<li><a href="#">{{ product.category }}</a></li>
@@ -384,27 +393,6 @@
 
 
 
-		<div id="newsletter" class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<div class="col-md-12">
-						<div class="newsletter">
-							<p>Мы сообщим о <strong>НОВИНКАХ</strong></p>
-							<form>
-								<input class="input" type="email" placeholder="Введите E-mail...">
-								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Подписаться</button>
-							</form>
-
-						</div>
-					</div>
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
-		<!-- /NEWSLETTER -->
 
 		<!-- FOOTER -->
 		<footer id="footer">
@@ -495,12 +483,12 @@
 		<!-- /FOOTER -->
 
 		<!-- jQuery Plugins -->
-		<script src="{% static 'js/jquery.min.js' %}"></script>
-		<script src="{% static 'js/bootstrap.min.js' %}"></script>
-		<script src="{% static 'js/slick.min.js' %}"></script>
-		<script src="{% static 'js/nouislider.min.js' %}"></script>
-		<script src="{% static 'js/jquery.zoom.min.js' %}"></script>
-		<script src="{% static 'js/main.js' %}"></script>
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/slick.min.js"></script>
+		<script src="js/nouislider.min.js"></script>
+		<script src="js/jquery.zoom.min.js"></script>
+		<script src="js/main.js"></script>
 
 	</body>
 </html>

@@ -123,7 +123,7 @@ def add_to_basket(request, slug):
 		basket = basket_qs[0]
 		#check if the item is in order
 		if ProductInBasket.objects.filter(product__slug=item.slug).exists():
-			messages.info(request, "Вы добавили этот товар:)")
+			messages.info(request, "Вы добавили этот товар в желаемое:)")
 			basket_item.number += 1
 			basket_item.price_per_item = Product.objects.get(slug=slug).price
 			basket_item.basket = basket_qs[0]
@@ -131,7 +131,7 @@ def add_to_basket(request, slug):
 			print("11 basket")
 			return redirect("product_detail", slug=slug)
 		else:
-			messages.info(request, "Вы добавили этот товар:)")
+			messages.info(request, "Вы добавили этот товар в желаемое:)")
 			basket_item.basket = basket_qs[0]
 			basket_item.price_per_item = Product.objects.get(slug=slug).price
 			basket_item.number = 1
@@ -142,7 +142,7 @@ def add_to_basket(request, slug):
 	else:
 		print("333")
 		ordered_date = timezone.now()
-		messages.info(request, "Вы добавили этот товар:)")
+		messages.info(request, "Вы добавили этот товар в желаемое:)")
 		newbasket = Basket.objects.create(customer_id=request.user.id, created = ordered_date)
 		basket_item.basket = newbasket
 		basket_item.price_per_item = Product.objects.get(slug=slug).price
@@ -158,18 +158,23 @@ def remove_from_basket(request, slug):
 		basket = basket_qs[0]
 		#check if the item is in order
 		if ProductInOrder.objects.filter(product__slug=item.slug).exists():
-			messages.info(request, "Вы удалили этот товар из заказа:(")
+			messages.info(request, "Вы удалили этот товар из желаемого:(")
 			basket_item.delete()
 			return redirect("product_detail", slug=slug)
 	else:
 		print("333")
 		return redirect("product_detail", slug=slug)
-def ordered(request, pk):
-	order = Order.objects.get(id=pk)
-	order.status_id=4
-	if "comment" in self.request.GET:
-		order.commets = comment
-	order.save()
+
+def ordered(request):
+	#pk = request.GET.get('pk') 
+	order = Order.objects.filter(customer_id=request.user.id)
+	if request.GET:
+		#order.status_id=4
+		#order.commets = comment
+		comment = request.GET.get("comment")
+		print(comment)
+		order.update(status_id=4, commets=comment)
+		return render(request, 'order.html')
 
 def add_to_order(request, slug):
 	item = get_object_or_404(Product, slug = slug)
@@ -179,16 +184,22 @@ def add_to_order(request, slug):
 		order = order_qs[0]
 		#check if the item is in order
 		if ProductInOrder.objects.filter(product__slug=item.slug).exists():
-			messages.info(request, "Вы добавили этот товар:)")
+			messages.info(request, "Вы добавили этот товар в заказ:)")
 			order_item.number += 1
 			if order_item.order != order_qs[0]:
 				order_item.order = order_qs[0]
 			order_item.save()
+			price = order_qs[0].total_price
+			print(price)
+			order_qs.update(total_price = price + order_item.price_per_item)
 			print("11!!!!!")
 			return redirect("product_detail", slug=slug)
 		else:
-			messages.info(request, "Вы добавили этот товар:)")
+			messages.info(request, "Вы добавили этот товар в заказ:)")
 			order_item.order = order_qs[0]
+			price = order_qs[0].total_price
+			print(price)
+			order_qs.update(total_price = price + order_item.price_per_item)
 			order_item.number = 1
 			order_item.save()
 			print("222")
@@ -198,9 +209,14 @@ def add_to_order(request, slug):
 		print("333")
 		status = Status.objects.all()
 		ordered_date = timezone.now()
-		messages.info(request, "Вы добавили этот товар:)")
+		messages.info(request, "Вы добавили этот товар в заказ:)")
 		neworder = Order.objects.create(customer_id=request.user.id, created = ordered_date, status_id=3)
+		price = neworder.total_price + order_item.price_per_item
+		print(price)
+		neworder.total_price = price
+		neworder.save()
 		order_item.order = neworder
+		order_item.number = 1
 		order_item.save()
 		return redirect("product_detail", slug=slug)
 
@@ -217,6 +233,10 @@ def remove_from_order(request, slug):
 				order_item.number -= 1
 				order_item.order = order_qs[0]
 				order_item.save()
+				price = order_qs[0].total_price
+				print(price)
+				order_qs.update(total_price = price - order_item.price_per_item)
+				#order_qs.update(total_price = order.total_price - order_item.total_price)
 				messages.info(request, "Вы удалили этот товар из заказа:(")
 				print("11")
 				return redirect("product_detail", slug=slug)
@@ -224,6 +244,9 @@ def remove_from_order(request, slug):
 				messages.info(request, "Вы удалили этот товар из заказа:(")
 				order_item.order = None
 				order_item.number = 0
+				price = order_qs[0].total_price
+				print(price)
+				order_qs.update(total_price = price - order_item.price_per_item)
 				order_item.delete()
 				return redirect("product_detail", slug=slug)
 	else:
@@ -243,7 +266,7 @@ class ShowFilters:
 class ProductView(ShowFilters, ListView):
 	"""Список product"""
 	model = Product
-	paginate_by = 4
+	paginate_by = 10
 	#queryset = Product.objects.all()
 	#template_name = "store.html"
 	queryset = Product.objects.filter(is_active=True)
@@ -290,7 +313,7 @@ class FilterProductsView(ShowFilters, ListView):
 #			kwargs["brand__in"] = self.request.GET.getlist("brand")
 #		return Product.objects.filter(**kwargs)
 
-class Search(ListView):
+class Search(ShowFilters, ListView):
 	model = Product
 	template_name="search.html"
 	def get_queryset(self):
